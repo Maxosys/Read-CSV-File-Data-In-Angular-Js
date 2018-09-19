@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+   border: 1px solid black;
+   padding:5px;
+}
+table {
+   border-collapse: collapse;
+   margin:10px;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+
+var app = angular.module("myapp",[]);
+
+ app.controller("myCtrl",function($scope, $http) {
+
+    $scope.readCSV = function() {
+        // http get request to read CSV file content
+        $http.get('Book1.csv').then(function(response) {
+    	  
+			  var allTextLines = response.data.split(/\r\n|\n/);	  
+			  processData(allTextLines);
+		  
+		  });
+    };
+	
+	$scope.abc = "After click on Display CSV button ";
+
+    function processData(allText) {
+
+        // split content based on new line
+        var allTextLines = allText;	
+		
+		
+        var headers = allTextLines[0].split(',');
+        var lines = [];
+
+        for ( var i = 0; i < allTextLines.length; i++) {
+            // split content based on comma
+            var data = allTextLines[i].split(',');
+            if (data.length == headers.length) {
+                var tarr = [];
+                for ( var j = 0; j < headers.length; j++) {
+                    tarr.push(data[j]);
+                }
+                lines.push(tarr);
+            }
+        }
+        $scope.data = lines;
+    }
+});
+</script>
+</head>
+
+<body ng-app="myapp" ng-controller="myCtrl">
+{{abc}}
+<button ng-click="readCSV()">
+Display CSV as Data Table
+</button>
+
+<div id="divID">
+  <table>
+    <tr ng-repeat="x in data">
+      <td ng-repeat="y in x">{{ y }}</td>
+    </tr>
+  </table>
+</div>
+
+
+</body>
+</html>
